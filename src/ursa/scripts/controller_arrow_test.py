@@ -8,7 +8,7 @@ import tf2_ros
 import tf2_geometry_msgs
 import threading
 import nav_msgs.msg
-
+import tf_conversions
 setpoint = geometry_msgs.msg.TransformStamped()
 takeOff=False
 tf_buffer = tf2_ros.Buffer(rospy.Duration(10.0)) #tf buffer length
@@ -48,7 +48,7 @@ def handle_takeoff_land(data):
 def waypointCB(data):
     global setpoint
     transform = tf_buffer.lookup_transform("map",
-                                       data.header.frame_id, #source frame
+                                       "map", #source frame
                                        rospy.Time(0), #get the tf at first available time
                                        rospy.Duration(1.0)) #wait for 1 second
 
@@ -61,13 +61,13 @@ def waypointCB(data):
     #     mapPose = global_plan_endpoint
     # else:
     #     mapPose = tf2_geometry_msgs.do_transform_pose(data.poses[-1], transform)
-    mapPose = tf2_geometry_msgs.do_transform_pose(data, transform)
-    setpoint.transform.translation.x = mapPose.pose.position.x
-    setpoint.transform.translation.y = mapPose.pose.position.y
-    setpoint.transform.rotation.x = mapPose.pose.orientation.x
-    setpoint.transform.rotation.y = mapPose.pose.orientation.y
-    setpoint.transform.rotation.z = mapPose.pose.orientation.z
-    setpoint.transform.rotation.w = mapPose.pose.orientation.w
+    #mapPose = tf2_geometry_msgs.do_transform_pose(data, transform)
+    setpoint.transform.translation.x = data.pose.position.x
+    setpoint.transform.translation.y = data.pose.position.y
+    setpoint.transform.rotation.x = data.pose.orientation.x
+    setpoint.transform.rotation.y = data.pose.orientation.y
+    setpoint.transform.rotation.z = data.pose.orientation.z
+    setpoint.transform.rotation.w = data.pose.orientation.w
 
 if __name__ == '__main__':
     rospy.init_node('ursa_controller', anonymous=True)
@@ -75,7 +75,7 @@ if __name__ == '__main__':
 
     # Init setpoint xform
     setpoint.header.frame_id = "map"
-    setpoint.child_frame_id = "setpoint"
+    setpoint.child_frame_id = "attitude"
     setpoint.transform.rotation.w = 1
 
     # listen for nav stuff

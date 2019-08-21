@@ -45,29 +45,7 @@ def handle_takeoff_land(data):
         t.start()
         return ursa.srv.TakeoffLandResponse(1)
 
-def waypointCB(data):
-    global setpoint
-    transform = tf_buffer.lookup_transform("map",
-                                       data.header.frame_id, #source frame
-                                       rospy.Time(0), #get the tf at first available time
-                                       rospy.Duration(1.0)) #wait for 1 second
 
-    # If goal is inside robot foot print then setpoint as goal opposed to local plan
-    # Commented out in response to issue #2.  Set local planner orientation in trajectory generator when inside robot radius.
-    # if (((current_pose.pose.position.x - robot_radius) < global_plan_endpoint.pose.position.x) and
-    #     (global_plan_endpoint.pose.position.x < (current_pose.pose.position.x + robot_radius)) and
-    #     ((current_pose.pose.position.y - robot_radius) < global_plan_endpoint.pose.position.y) and
-    #     (global_plan_endpoint.pose.position.y < (current_pose.pose.position.y + robot_radius))):
-    #     mapPose = global_plan_endpoint
-    # else:
-    #     mapPose = tf2_geometry_msgs.do_transform_pose(data.poses[-1], transform)
-    mapPose = tf2_geometry_msgs.do_transform_pose(data, transform)
-    setpoint.transform.translation.x = mapPose.pose.position.x
-    setpoint.transform.translation.y = mapPose.pose.position.y
-    setpoint.transform.rotation.x = mapPose.pose.orientation.x
-    setpoint.transform.rotation.y = mapPose.pose.orientation.y
-    setpoint.transform.rotation.z = mapPose.pose.orientation.z
-    setpoint.transform.rotation.w = mapPose.pose.orientation.w
 
 if __name__ == '__main__':
     rospy.init_node('ursa_controller', anonymous=True)
@@ -75,11 +53,9 @@ if __name__ == '__main__':
 
     # Init setpoint xform
     setpoint.header.frame_id = "map"
-    setpoint.child_frame_id = "setpoint"
+    setpoint.child_frame_id = "attitude"
     setpoint.transform.rotation.w = 1
 
-    # listen for nav stuff
-    local_plan_sub = rospy.Subscriber('/ursa_target', geometry_msgs.msg.PoseStamped, waypointCB, queue_size=10)
 
     # setup services as client
     set_mode = rospy.ServiceProxy('/mavros/set_mode', mavros_msgs.srv.SetMode)

@@ -15,7 +15,7 @@
   <arg name="tgt_component" default="1" />
   <arg name="pluginlists_yaml" default="$(find mavros)/launch/px4_pluginlists.yaml" />
   <arg name="config_yaml" default="$(find ursa)/config/mavros/px4_config_sim.yaml" />
-  <arg name="corverage_search" default="frontier_exploration" />
+
   <group ns="$(arg ns)">
       <include file="$(find mavros)/launch/node.launch">
           <arg name="pluginlists_yaml" value="$(arg pluginlists_yaml)" />
@@ -26,8 +26,7 @@
           <arg name="tgt_component" value="$(arg tgt_component)" />
       </include>
   </group>
- 
-		
+
   <node name="robot_state_publisher" pkg="robot_state_publisher"
     type="robot_state_publisher" />
 

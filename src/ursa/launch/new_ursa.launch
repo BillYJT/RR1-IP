@@ -8,15 +8,26 @@
     <param name="robot_description" textfile="$(find ursa)/urdf/rr2-ip.urdf" />
     <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
 
+    <!--<node pkg="tf" type="static_transform_publisher" name="map_to_baselink" args="0.0 0.0 0.0 0 0 0.0 /map /base_link 1000"/> -->
     <!-- Launch MAVROS -->
-    <include file="$(find ursa)/launch/new_mavros.launch" />
+
+    <machine name="PC" address="192.168.8.64" user="ursa" timeout="10" /> 
+    <machine name="Laptop" address="192.168.8.20" user="gijos" timeout="10" />
+    <include file="$(find ursa)/launch/new_mavros.launch" /> 
 
     <!-- Set the altitude of drone -->
     <node name="height_publisher" pkg="ursa" type="rr2_height_publisher.py" respawn="true" />
 
     <!-- Setup urg_node -->
-    <machine name="drone" address="192.168.8.1" user="rr2-ip" timeout="10"/>
+    <!--<machine name="drone" address="192.168.8.1" user="rr2-ip" timeout="10"/>
+    <node  machine="drone" name="urg_node" pkg="urg_node" type="urg_node" respawn="true"/> -->
+
+ 
+    <!-- Setup urg_node -->
+    <!-- <machine name="drone" address="192.168.8.1" user="rr2-ip" timeout="10"/> -->
+    <machine name="drone" address="192.168.8.1" user="rr2-ip-new" timeout="10"/>
     <node  machine="drone" name="urg_node" pkg="urg_node" type="urg_node" respawn="true"/>
+
 
     <!-- Replace nan data with MAX_RANGE + 1 -->
     <node name="scan_filtered_nans" pkg="ursa" type="scan_filtered_nans.py" respawn="true" />
@@ -28,25 +39,42 @@
     <node name="ursa_controller" pkg="ursa" type="controller.py" output="screen" required="true"/>
 
     <!-- Start cartographer -->
+    <!--<node name="cartographer_node" pkg="cartographer_ros"
+          type="cartographer_node" args="
+          -configuration_directory $(find ursa)/config
+          -configuration_basename cartographer_config.lua" output="screen">
+          <remap from='scan' to='scan_filtered_nans'/>
+          <remap from='imu' to='filtered_imu'/>
+    </node> -->
+
+    <!-- Start cartographer -->
+   
     <node name="cartographer_node" pkg="cartographer_ros"
           type="cartographer_node" args="
           -configuration_directory $(find ursa)/config
           -configuration_basename cartographer_config.lua" output="screen">
           <remap from='scan' to='scan_filtered_nans'/>
           <remap from='imu' to='filtered_imu'/>
-		  
-    </node>
-	<!-- remap from='fix' to='/mavros/global_position/raw/fix'/ -->
-    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find ursa)/config/rr2.rviz" respawn="true"/>
 
-    <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
-      <rosparam file="$(find ursa)/config/planner/local_costmap_params.yaml" command="load" />
+		  <remap from='odom' to='/mavros/local_position/odom'/>
+    </node> 
+	<!-- <remap from='fix' to='/mavros/global_position/raw/fix'/> -->
+	<!-- This package is for visiualising sensor data, maps as well as inputing the goal --> 
+    
+	<node name="rviz" pkg="rviz" type="rviz" args="-d $(find ursa)/config/rr2.rviz" respawn="true"/> 
+
+	<!-- This package is for generating control commants that help the drone reaches the disired setpoint and avoid obstacles-->
+    <node pkg="move_base" type="move_base" respawn="true" name="move_base" output="screen">
+
+      <rosparam file="$(find ursa)/config/planner/costmap_common_params.yaml" command="load" ns="global_costmap" /> 
+      <rosparam file="$(find ursa)/config/planner/costmap_common_params.yaml" command="load" ns="local_costmap" />
+      <rosparam file="$(find ursa)/config/planner/local_costmap_params.yaml" command="load"  />
       <rosparam file="$(find ursa)/config/planner/global_costmap_params.yaml" command="load" />
-      <rosparam file="$(find ursa)/config/planner/base_local_planner_params.yaml" command="load" />
-      <rosparam file="$(find ursa)/config/planner/base_global_planner_params.yaml" command="load" />
+      <rosparam file="$(find ursa)/config/planner/base_local_planner_params.yaml" command="load"  />
+      <rosparam file="$(find ursa)/config/planner/base_global_planner_params.yaml" command="load"  />
       <rosparam file="$(find ursa)/config/planner/recovery_behaviours.yaml" command="load" />
       <remap from='/laser/scan' to='scan_filtered_nans'/>
-    </node>
+    </node> 
 </launch>
 
 

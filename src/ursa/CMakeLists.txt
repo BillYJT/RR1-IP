@@ -51,6 +51,12 @@ catkin_package(
 ###########
 ## Build ##
 ###########
+add_executable(control scripts/control.cpp)
+add_dependencies(control ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(control
+  ${catkin_LIBRARIES}
+)
+
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
@@ -75,6 +81,7 @@ set(HEADER_FILES
 ## Declare a C++ library - for our GUI
 add_library(ursa_gui ${SOURCE_FILES} ${HEADER_FILES})
 target_link_libraries(ursa_gui Qt5::Widgets ${OGRE_LIBRARIES} ${catkin_LIBRARIES})
+
 
 #############
 ## Install ##

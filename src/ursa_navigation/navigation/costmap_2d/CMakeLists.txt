@@ -97,6 +97,7 @@ add_library(costmap_2d
   src/footprint.cpp
   src/costmap_layer.cpp
 )
+
 add_dependencies(costmap_2d ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(costmap_2d
   ${PCL_LIBRARIES}
@@ -111,6 +112,7 @@ add_library(layers
   plugins/voxel_layer.cpp
   src/observation_buffer.cpp
 )
+add_library(simple_layer plugins/simple_layer.cpp)
 add_dependencies(layers ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(layers
   costmap_2d

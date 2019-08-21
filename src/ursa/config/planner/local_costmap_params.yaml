@@ -2,6 +2,7 @@ local_costmap:
   plugins: 
   - {name: obstacles, type: "costmap_2d::ObstacleLayer"}
   - {name: inflation, type: "costmap_2d::InflationLayer"}
+  - {name: simple, type: "simple_layer_namespace::SimpleLayer"}
   # coordinate frame and tf parameters
   global_frame: /map
   robot_base_frame: base_link
