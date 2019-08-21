@@ -1,0 +1,3 @@
+[submodule "src/ursa_navigation"]
+	path = src/ursa_navigation
+	url = https://github.com/ursa-drone/ursa-server.git
