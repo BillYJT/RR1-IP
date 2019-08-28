@@ -8,7 +8,8 @@ sensor_msgs::LaserScan temp_msg;
 ros::Publisher pub_temp("temp", &temp_msg);
 
 const int analog_pin = 0;
-unsigned long timer;
+unsigned long timer = 0;
+unsigned long publisher_timer = 0;
 
 int dir_gen(int pin_num){
   return 1; //For testing, always detect in forward direction
@@ -24,32 +25,35 @@ void setup(){
   temp_msg.header.frame_id =  frameid;
   temp_msg.angle_min = 0.0;
   temp_msg.angle_max = 6.28;  
-  temp_msg.angle_increment = 6.28/40; 
+  temp_msg.angle_increment = 6.28/20; 
   temp_msg.range_min = 0.03;  
   temp_msg.range_max = 7; 
-  temp_msg.scan_time = 0.2;
-  temp_msg.ranges_length = 40;
-  //temp_msg.intensities_length = 2;
+  //temp_msg.scan_time = 0.05;
+  temp_msg.ranges_length = 20;
+  temp_msg.intensities_length = 20;
 }
 
-int num_readings = 40;
+int num_readings = 20;
 
 void loop(){
   int dir = dir_gen(analog_pin);
   float range[num_readings] = {0};
+  float intensities[num_readings] = {0};
   int angle_start = (dir-1)*num_readings/4;
   int angle_end = dir*num_readings/4;
 
-  if ( (millis()-timer) > 200){
-    
+  if ( (millis()-publisher_timer) > 200){
+    temp_msg.header.stamp = nh.now();
+    timer =  millis();
     for(unsigned int i = angle_start; i < angle_end;  i++){
-        range[i] = 6.0;
+        range[i] = 1.0;
     }
      
     temp_msg.ranges = range;
-    temp_msg.header.stamp = nh.now();
+    temp_msg.intensities = intensities;
+    temp_msg.scan_time = millis() - timer;
     pub_temp.publish(&temp_msg);
-    timer =  millis();
+    publisher_timer =  millis();
   }
   nh.spinOnce();
 }
