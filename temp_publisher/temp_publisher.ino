@@ -12,6 +12,8 @@ unsigned long timer = 0;
 unsigned long publisher_timer = 0;
 char str[20];
 char result[8];
+int num_readings = 10;
+
 int dir_gen(int pin_num){
   return 1; //For testing, always detect in forward direction
 }
@@ -25,16 +27,15 @@ void setup(){
 
   temp_msg.header.frame_id =  frameid;
   temp_msg.angle_min = 0.0;
-  temp_msg.angle_max = 6.28;  
-  temp_msg.angle_increment = 6.28/20; 
+  temp_msg.angle_max = 0.52;  
+  temp_msg.angle_increment = temp_msg.angle_max/num_readings; 
   temp_msg.range_min = 0.03;  
   temp_msg.range_max = 7; 
   //temp_msg.scan_time = 0.05;
-  temp_msg.ranges_length = 20;
-  temp_msg.intensities_length = 20;
+  temp_msg.ranges_length = num_readings;
+  temp_msg.intensities_length = num_readings;
 }
 
-int num_readings = 20;
 
 void loop(){
   int dir = dir_gen(analog_pin);
@@ -57,8 +58,8 @@ void loop(){
     }
     //Serial.println(val);
     if (val<100){
-      for(unsigned int i = angle_start+1; i < angle_end-1;  i++){ //only place obstacles in front of drone
-          range[i] = 40*val/1024;
+      for(unsigned int i = 0; i < num_readings;  i++){ //only place obstacles in front of drone
+          range[i] = 60*val/1024;
       }
     } 
     temp_msg.ranges = range;

@@ -19,10 +19,13 @@ options = {
     submap_publish_period_sec = 0.3,
     pose_publish_period_sec = 5e-3,
     trajectory_publish_period_sec = 30e-3,
+	-- num_laser_scans = 2,
 }
 
 -- Use 2D map builder
 MAP_BUILDER.use_trajectory_builder_2d = true
+-- use 2 scanners
+-- TRAJECTORY_BUILDER_2D.scans_per_accumulation = 2
 
 -- Custom parameters
 TRAJECTORY_BUILDER_2D.use_imu_data = true
