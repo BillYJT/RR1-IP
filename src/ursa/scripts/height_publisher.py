@@ -11,8 +11,6 @@ import nav_msgs.msg
 import math
 import PyKDL
 
-tf_buffer = tf2_ros.Buffer(rospy.Duration(10.0)) #tf buffer length
-tf_listener = tf2_ros.TransformListener(tf_buffer)
 
 def rangeCB(data):
     global tf_buffer
@@ -48,6 +46,9 @@ def rangeCB(data):
  
 if __name__ == '__main__':
     rospy.init_node('height_publisher', anonymous=True)
+    tf_buffer = tf2_ros.Buffer(rospy.Duration(10.0)) #tf buffer length
+    tf_listener = tf2_ros.TransformListener(tf_buffer)
+
     print("Initialising height_publisher node...")
     # Justin changed sonar_sensor to current_distance 6/8
     range_sub = rospy.Subscriber('/mavros/distance_sensor/sonar_sensor', sensor_msgs.msg.Range, rangeCB, queue_size=10)

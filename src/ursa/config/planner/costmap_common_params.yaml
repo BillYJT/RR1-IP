@@ -1,11 +1,17 @@
-obstacle_range: 10.0
-raytrace_range: 10.0
+robot_radius: 0.34 #The radius of the robot in meters, this parameter should only be set for circular robots
 
-robot_radius: 0.34
-inflation_radius: 1.2
+obstacles_layer:
+  enabled: true
+  obstacle_range: 5.6 #The default maximum distance from the robot at which an obstacle will be inserted into the cost map in meters. This can be over-ridden on a per-sensor basis (double, default: 2.5)
+  raytrace_range: 3.0 #The default range in meters at which to raytrace out obstacles from the map using sensor data. This can be over-ridden on a per-sensor basis.(double, default: 3.0)
+  track_unknown_space:  true #true needed for disabling global path planning through unknown space
+  observation_sources: laser_scan_sensor #A list of observation source names separated by spaces.
 
-observation_sources: laser_scan_sensor 
-
-laser_scan_sensor: {sensor_frame: hokuyo_link, data_type: LaserScan, topic: /laser/scan, marking: true, clearing: true}
-
-track_unknown_space: true
+  laser_scan_sensor: {sensor_frame: hokuyo_link, data_type: LaserScan, topic: /laser/scan, marking: true, clearing: true}
+  
+inflation_layer:
+  enabled: true
+  inflation_radius: 1.2 #The radius in meters to which the map inflates obstacle cost values.
+  cost_scaling_factor: 5.0 # exponential rate at which the obstacle cost drops off (default: 10)
+static_layer:
+  enabled: true

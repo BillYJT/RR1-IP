@@ -9,9 +9,7 @@ import geometry_msgs.msg
 
 lastPub = 0
 lastClean = 0
-pub = rospy.Publisher('filtered_imu', Imu, queue_size=10)
-tf_buffer = tf2_ros.Buffer(rospy.Duration(10.0)) #tf buffer length
-tf_listener = tf2_ros.TransformListener(tf_buffer)
+
 
 def callbackRaw(imu_in):
 	global lastPub, lastClean
@@ -35,5 +33,9 @@ def filter_imu():
 	rospy.spin()
 
 if __name__ == '__main__':
+	rospy.sleep(1)
+	pub = rospy.Publisher('filtered_imu', Imu, queue_size=10)
 	filter_imu()
+        tf_buffer = tf2_ros.Buffer(rospy.Duration(10.0)) #tf buffer length
+        tf_listener = tf2_ros.TransformListener(tf_buffer)
 

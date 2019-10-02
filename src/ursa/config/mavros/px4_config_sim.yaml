@@ -85,11 +85,10 @@ setpoint_accel:
 
 # setpoint_attitude
 setpoint_attitude:
-  use_quaternion: false      ## enable PoseStamped topic subscriber
   reverse_throttle: false   # allow reversed throttle
   tf:
     listen: false           # enable tf listener (disable topic subscribers)
-    frame_id: "map"
+    frame_id: "local_origin"
     child_frame_id: "attitude"
     rate_limit: 10.0
 

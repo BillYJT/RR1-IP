@@ -41,9 +41,7 @@
       type="cartographer_node" args="
           -configuration_directory $(find ursa)/config
           -configuration_basename ursa_sim.lua">
-    <remap from="scan" to="/laser/scan"/> 
-    <!-- <remap from="scan_1" to="/laser/scan"/>
-    <remap from="scan_2" to="/temp"/> -->
+    <remap from="scan" to="/laser/scan"/>
     <remap from="imu" to="filtered_imu" />
   </node>
 
