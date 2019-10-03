@@ -1,0 +1,12 @@
+<!-- Adapted from 2017 Launch File -->
+<!-- Copyright 2017 - LAOSAAC -->
+
+<launch>
+    <!-- Setup urg_node -->
+    <machine name="drone" address="192.168.8.1" user="rr2-ip" password="abc111"/>
+    <node  machine="drone" name="urg_node" pkg="urg_node" type="urg_node" respawn="true"/>
+
+    <node name="rviz" pkg="rviz" type="rviz"/>
+</launch>
+
+

@@ -1,0 +1,11 @@
+<launch>
+
+    <!-- Setup urg_node -->
+    <machine name="drone" address="192.168.20.31" user="rr2-ip"/>
+    <!--machine name="GC" address="ursa" user="ursa"/-->
+    <node  machine="drone" name="tf_publisher" pkg="tf" type="static_tf_publisher" args="/map /body 10 0 0 0 0 0 0"/>
+    
+
+    
+</launch>
+
