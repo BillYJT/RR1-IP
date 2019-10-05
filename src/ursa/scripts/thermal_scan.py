@@ -2,28 +2,35 @@
 import rospy
 import std_msgs.msg 
 import sensor_msgs.msg
+import numpy as np
 
-hot_ang = []
-tmp_scan = sensor_msgs.msg.LaserScan()
-pub = rospy.Publisher('/thermal_scan', std_msgs.msg.String, queue_size=10)
+hot_scan = sensor_msgs.msg.LaserScan()
+hot_scan.angle_min = -27925
+hot_scan.angle_max = 0.27925
+hot_scan.angle_increment = 0.01745
+hot_scan.range_min = 0.03
+hot_scan.range_max = 5.6
+hot_scan.header.frame_id = 'thermal_frame'
+
+pub = rospy.Publisher('/thermal_scan', sensor_msgs.msg.LaserScan, queue_size=10)
 
 def imageCB(data):
-    #find angles corresponding to hot obj and modify the tmp_scan, then publish
-    
-    pub.publish(tmp_scan)
+    #find angles corresponding to hot obj then publish a rough estimate laserscan
+    global hot_scan
+    tmp = np.zeros(32)
 
-def ScanCB(data):
-    #Store laser scan data
-    tmp_scan = data
-    
-def find_hot():
-    
-    rospy.Subscriber("/teraranger_evo_thermal/raw_temp_array", std_msgs.msg.Float64MultiArray, imageCB)
-    rospy.Subscriber("/laser/scan", sensor_msgs.msg.LaserScan, ScanCB)
+    for i in range(0,32): #col
+        for j in range(10,20): #row
+            tmp[i] = tmp[i] + data[j][i]
+
+    tmp_mask = np.where(tmp>2000)
+    hot_scan.ranges = np.multiply(np.divide(2000,tmp) + 1, tmp_mask) #Publish points between 1 and 2m
+    hot_scan.header.stamp = rospy.Time.now()
+    pub.publish(hot_scan)
 
 
 if __name__ == '__main__':
     rospy.init_node('thermal_scan', anonymous=True)
-    find_hot()
+    rospy.Subscriber("/teraranger_evo_thermal/raw_temp_array", std_msgs.msg.Float64MultiArray, imageCB)
 
     rospy.spin()
