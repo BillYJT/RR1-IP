@@ -19,13 +19,16 @@ def imageCB(data):
     #find angles corresponding to hot obj then publish a rough estimate laserscan
     global hot_scan
     tmp = np.zeros(32)
-
+    
     for i in range(0,32): #col
         for j in range(10,20): #row
-            tmp[i] = tmp[i] + data[j][i]
+            tmp[i] = tmp[i] + data.data[32*j+i]
 
-    tmp_mask = np.where(tmp>2000)
-    hot_scan.ranges = np.multiply(np.divide(2000,tmp) + 1, tmp_mask) #Publish points between 1 and 2m
+    tmp_mask = (tmp>200)*1
+    #print(tmp)
+    #print(tmp_mask)
+    ranges = np.multiply(np.divide(2000,tmp) + 1, tmp_mask) #Publish points between 1 and 2m
+    hot_scan.ranges = ranges    
     hot_scan.header.stamp = rospy.Time.now()
     pub.publish(hot_scan)
 
